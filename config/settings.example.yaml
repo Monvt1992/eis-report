@@ -1,0 +1,81 @@
+# Copy this file to settings.yaml (or any name) and edit the paths/columns
+# below to match your real Excel files. Run with:
+#   python main.py --config config/settings.yaml
+
+output:
+  pptx_path: output/EIS_Report.pptx
+  charts_dir: output/charts
+
+template:
+  # Path to your company's standard PPTX template (.pptx). Leave "" to let
+  # the tool build a plain 16:9 deck instead.
+  pptx_path: "assets/template.pptx"
+
+milestone:
+  cw: 37
+  title: "4M Implement"
+  before_color: "#DCE9F7"   # light blue background for weeks before CW37
+  after_color: "#DFF3E1"    # light green background for weeks from CW37 on
+  line_color: "#C00000"     # red vertical milestone line
+  title_color: "#C00000"    # red milestone title text
+  # Only needed for Task 3 (multi-year timeseries), where CW37 repeats every
+  # year. Set an explicit split date OR the specific year the 4M change
+  # happened; if both are left blank the tool uses CW37 of the most recent
+  # year present in the data.
+  # date: "2025-09-08"
+  # year: 2025
+
+task1_production_data:
+  enabled: true
+  file: "data/productiondata.xlsx"
+  sheet: 0
+  cw_source: "datetime"          # CW computed from MEETMOMENT
+  datetime_column: "MEETMOMENT"
+  columns:
+    eis1: "Eis1"
+    eis2: "Eis2"
+    eis4: "Eis4"
+    eis5: "Eis5"
+    eis14: "Eis14"                # left as-is if already in the file, else
+                                   # computed as Eis4 + abs(Eis1) - abs(Eis2)
+  charts: ["eis2", "eis5", "eis14"]
+
+task2_mix_result:
+  enabled: true
+  file: "data/Mix_result.xlsx"
+  sheet: 0
+  cw_source: "mixno"              # CW parsed from MixNo, e.g. C636-501 -> 36
+  mixno_column: "MixNo"
+  columns:
+    wtavgeis1: "WtAvgEis1"
+    wtavgeis2: "WtAvgEis2"
+    wtavgeis4: "WtAvgEis4"
+    wtavgeis5: "WtAvgEis5"
+    wtavgeis14: "WtAvgEis14"
+  charts: ["wtavgeis2", "wtavgeis5", "wtavgeis14"]
+
+task3_timeseries:
+  enabled: true
+  file: "data/Wt Avg Eis 2022-2026_all type.xlsx"
+  sheet: 0
+  cw_source: "mixno"
+  mixno_column: "MixNo"
+  date_column: "Date"
+  group_column: "Group"           # extra milestone labels/annotations
+  columns:
+    wtavgeis2: "WtAvgEis2"
+    wtavgeis5: "WtAvgEis5"
+    wtavgeis14: "WtAvgEis14"
+  charts: ["wtavgeis2", "wtavgeis5", "wtavgeis14"]
+  moving_average_window: 5
+  stretch_after_milestone: true   # widen the sparse after-CW37 segment
+  min_after_width_ratio: 0.35     # min fraction of chart width for "after"
+
+style:
+  figure_width_in: 13.0
+  figure_height_in: 6.5
+  dpi: 200
+  box_color: "#4472C4"
+  trend_color: "#ED7D31"
+  ma_color: "#ED7D31"
+  font_family: "Calibri"
