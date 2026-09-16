@@ -45,10 +45,23 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "task2_mix_result": {
         "enabled": True,
         "file": "sample_data/Mix_result.xlsx",
+        # "excel" (mặc định): đọc trực tiếp file ở "file" phía trên.
+        # "sql": query từ SQL Server (xem eis_report/db.py) rồi cache kết quả
+        # ra file đó luôn, sau đó đọc tiếp như nguồn "excel".
+        "source": "excel",
+        "sql": {
+            "db_config": "config/db.json",
+            "query_file": None,  # None -> lấy theo query_file trong db.json
+        },
         "sheet": 0,
         "cw_source": "mixno",
         "datetime_column": "MEETMOMENT",
         "mixno_column": "MixNo",
+        # MixNo (vd C636-501) chứa cả năm (ký tự 2 = "6" -> 2026) lẫn CW (ký
+        # tự 3-4 = "36"). Không lọc năm thì CW01..CW52 sẽ gộp lẫn mọi năm có
+        # trong data lại chung 1 box. "current" = chỉ năm hiện tại, số
+        # nguyên = năm cụ thể, null = tắt lọc (giữ mọi năm, hành vi cũ).
+        "year_filter": "current",
         "columns": {
             "wtavgeis1": "WtAvgEis1",
             "wtavgeis2": "WtAvgEis2",
@@ -73,7 +86,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         },
         "charts": ["wtavgeis2", "wtavgeis5", "wtavgeis14"],
         "moving_average_window": 5,
-        "stretch_after_milestone": True,
+        "stretch_after_milestone": False,
         "min_after_width_ratio": 0.35,
     },
     "style": {
