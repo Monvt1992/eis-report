@@ -1,0 +1,7 @@
+# Chỉ cần cài thêm nếu dùng scripts/fetch_mix_result.py để lấy dữ liệu
+# trực tiếp từ SQL Server (không cần cho việc chạy report từ file Excel có sẵn).
+# Cài: pip install -r requirements-db.txt
+# Yêu cầu máy đã cài "ODBC Driver 17 for SQL Server" (driver hệ điều hành,
+# không cài qua pip được).
+sqlalchemy>=2.0
+pyodbc>=5.0

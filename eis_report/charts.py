@@ -135,16 +135,16 @@ def boxplot_by_cw(
         zorder=4,
     )
 
-    # Milestone vertical line + red title.
+    # Milestone vertical line + red title (centered on the line).
     ax.axvline(split_x, color=milestone_cfg.get("line_color", "#C00000"), linewidth=2, linestyle="--", zorder=5)
     ax.text(
         split_x,
         ax.get_ylim()[1],
-        f"  {milestone_cfg.get('title', '4M Implement')} (CW{milestone_cw})",
+        f"{milestone_cfg.get('title', '4M Implement')} (CW{milestone_cw})",
         color=milestone_cfg.get("title_color", "#C00000"),
         fontweight="bold",
         va="bottom",
-        ha="left",
+        ha="center",
         rotation=0,
         fontsize=11,
     )
@@ -160,7 +160,7 @@ def boxplot_by_cw(
     fig.tight_layout()
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=style_cfg.get("dpi", 200))
+    fig.savefig(out_path, dpi=style_cfg.get("dpi", 200), bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
     return out_path
 
@@ -272,9 +272,9 @@ def timeseries_with_ma(
             ax.axvspan(split_date, data[date_col].max(), color=milestone_cfg.get("after_color", "#DFF3E1"), zorder=0)
             ax.axvline(split_date, color=milestone_cfg.get("line_color", "#C00000"), linewidth=2, linestyle="--", zorder=5)
             ax.text(split_date, ax.get_ylim()[1],
-                    f"  {milestone_cfg.get('title', '4M Implement')} (CW{int(milestone_cfg.get('cw', 37))})",
+                    f"{milestone_cfg.get('title', '4M Implement')} (CW{int(milestone_cfg.get('cw', 37))})",
                     color=milestone_cfg.get("title_color", "#C00000"), fontweight="bold",
-                    va="bottom", ha="left", fontsize=11)
+                    va="bottom", ha="center", fontsize=11)
 
         ax.plot(data[date_col], data[value_col], color=style_cfg.get("box_color", "#4472C4"),
                 linewidth=1.2, marker="o", markersize=2.5, alpha=0.85, label=value_col, zorder=3)
@@ -294,6 +294,6 @@ def timeseries_with_ma(
 
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=style_cfg.get("dpi", 200), bbox_inches="tight")
+    fig.savefig(out_path, dpi=style_cfg.get("dpi", 200), bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
     return out_path

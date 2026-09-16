@@ -1,0 +1,9 @@
+{
+  "database": {
+    "server": "LTH-SQL-CLUSTER.APAC.BOSCH.COM",
+    "database": "DB_DATAMART_SQL",
+    "driver": "ODBC Driver 17 for SQL Server"
+  },
+  "query_file": "sql/mixresult_query.sql",
+  "output_file": "data/Mix_result.xlsx"
+}

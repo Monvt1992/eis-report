@@ -1,0 +1,101 @@
+# Copy this file to settings.yaml (or any name) and edit the paths/columns
+# below to match your real Excel files. Run with:
+#   python main.py --config config/settings.yaml
+
+output:
+  pptx_path: output/EIS_Report.pptx
+  charts_dir: output/charts
+
+template:
+  # Path to your company's standard PPTX template (.pptx). Leave "" to let
+  # the tool build a plain 16:9 deck instead.
+  pptx_path: "assets/template.pptx"
+
+milestone:
+  cw: 37
+  title: "4M Implement"
+  before_color: "#DCE9F7"   # light blue background for weeks before CW37
+  after_color: "#DFF3E1"    # light green background for weeks from CW37 on
+  line_color: "#C00000"     # red vertical milestone line
+  title_color: "#C00000"    # red milestone title text
+  # Only needed for Task 3 (multi-year timeseries), where CW37 repeats every
+  # year. Set an explicit split date OR the specific year the 4M change
+  # happened; if both are left blank the tool uses CW37 of the most recent
+  # year present in the data.
+  # date: "2025-09-08"
+  # year: 2025
+
+task1_production_data:
+  enabled: true
+  file: "data/productiondata.xlsx"
+  sheet: 0
+  cw_source: "datetime"          # CW computed from MEETMOMENT
+  datetime_column: "MEETMOMENT"
+  columns:
+    eis1: "Eis 1"
+    eis2: "Eis 2"
+    eis4: "Eis 4"
+    eis5: "Eis 5"
+    eis14: "Eis 14"                # left as-is if already in the file, else
+                                   # computed as Eis4 + abs(Eis1) - abs(Eis2)
+  charts: ["eis2", "eis5", "eis14"]
+
+task2_mix_result:
+  enabled: true
+  file: "data/Mix_result.xlsx"    # nguồn "sql" cũng ghi/cache kết quả ra đây
+  source: "sql"                   # "excel" (đọc file trên) hoặc "sql" (query
+                                   # SQL Server rồi tự cache ra file trên)
+  sql:
+    db_config: "config/db.json"   # copy từ config/db.example.json rồi điền
+                                   # server/database thật (không commit lên git)
+    # query_file: "sql/mixresult_query.sql"  # để trống -> lấy theo db.json
+  sheet: 0
+  cw_source: "mixno"              # CW parsed from MixNo, e.g. C636-501 -> 36
+  mixno_column: "MixNo"
+  year_filter: "current"          # chỉ giữ data năm hiện tại (lấy từ ký tự
+                                   # thứ 2 của MixNo, vd C636-501 -> 2026),
+                                   # tránh gộp CW của nhiều năm vào 1 box.
+                                   # Đặt số cụ thể (vd 2025) hoặc null (tắt
+                                   # lọc, giữ mọi năm) nếu cần khác.
+  columns:
+    wtavgeis1: "WtAvgEis1"
+    wtavgeis2: "WtAvgEis2"
+    wtavgeis4: "WtAvgEis4"
+    wtavgeis5: "WtAvgEis5"
+    wtavgeis14: "WtAvgEis14"
+  charts: ["wtavgeis2", "wtavgeis5", "wtavgeis14"]
+
+task3_timeseries:
+  enabled: true
+  file: "data/Wt Avg Eis 2022-2026_all type.xlsx"
+  sheet: 0                        # sheet "Element_Mix_WtAvgEis2" — đã chứa
+                                   # đủ cả 3 cột Raw.WtAvgEis2/5/14 nên không
+                                   # cần đọc thêm 2 sheet kia
+  header: 20                      # dòng tiêu đề thật là dòng 21 trong Excel
+                                   # (0-based = 20); tool vẫn tự dò được nếu
+                                   # bạn bỏ trống dòng này, set cứng cho nhanh
+  cw_source: "mixno"
+  mixno_column: "MixNo"
+  group_column: "Group"           # cột năm (2022, 2023... hoặc "2026-06"
+                                   # cho năm hiện tại) — tool tự tính ngày từ
+                                   # năm này + CW vì file không có cột ngày
+                                   # thật
+  columns:
+    wtavgeis2: "Raw.WtAvgEis2"
+    wtavgeis5: "Raw.WtAvgEis5"
+    wtavgeis14: "Raw.WtAvgEis14"
+  charts: ["wtavgeis2", "wtavgeis5", "wtavgeis14"]
+  moving_average_window: 5
+  stretch_after_milestone: false  # tắt: không tách 2 panel before/after CW37
+                                   # nữa, chỉ vẽ 1 timeline liên tục (vẫn có
+                                   # nền xanh/đỏ + line mốc như cũ)
+  min_after_width_ratio: 0.35     # không còn tác dụng khi stretch tắt ở trên
+
+style:
+  figure_width_in: 13.0
+  figure_height_in: 6.5
+  dpi: 200
+  box_color: "#4472C4"
+  trend_color: "#ED7D31"
+  ma_color: "#ED7D31"
+  font_family: "Calibri"

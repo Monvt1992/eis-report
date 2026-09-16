@@ -5,6 +5,33 @@ theo [SemVer](https://semver.org/) (MAJOR.MINOR.PATCH).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-14
+
+### Added
+- Task 3: hỗ trợ file không có cột ngày thật — nếu chỉ có cột năm
+  (`group_column`, dạng số hoặc `"YYYY-MM"`) cộng với CW, tool tự tổng hợp
+  ngày (thứ Hai của tuần ISO đó) để vẽ timeseries và tách mốc 4M đúng theo
+  từng năm.
+- Task 3: tự bỏ tiền tố `Raw.` khỏi tên cột khi hiển thị trục/label chart
+  (ví dụ cột thật `Raw.WtAvgEis2` → hiển thị `WtAvgEis2`) nếu không đụng tên
+  cột khác.
+- Mở rộng phạm vi dò dòng tiêu đề thật (tự động) từ 15 lên 40 dòng đầu file,
+  vì có file thực tế header nằm tận dòng 21.
+- Thêm `config/settings.task3_real_file.example.yaml`: mẫu cấu hình Task 3
+  khớp đúng cấu trúc file `Wt Avg Eis 2022-2026_all type.xlsx` thật (sheet
+  `Element_Mix_WtAvgEis2`, header dòng 21, không có cột ngày, cột năm là
+  `Group`).
+
+## [0.2.0] - 2026-09-14
+
+### Added
+- Hỗ trợ config `header: <0-based row index>` cho từng task, dùng khi file
+  Excel có dòng title/merged-cell phía trên dòng tiêu đề thật.
+- Tự động dò dòng tiêu đề thật khi không set `header` và kết quả đọc ra toàn
+  cột `Unnamed: N` — in ra console dòng đã dò được.
+- Thông báo lỗi `KeyError` (thiếu cột MixNo/datetime) giờ có gợi ý sửa khi
+  phát hiện cột `Unnamed: N`.
+
 ## [0.1.0] - 2026-09-14
 
 ### Added
